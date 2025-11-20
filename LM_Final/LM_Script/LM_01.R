@@ -6,6 +6,27 @@ date: "`r format(Sys.time(), "Last modified: %d %b %Y")`"
 
 #-------SNRM course, developped by Ernest Fotsing, PhD, University of Fribourg
 
+# define the working directory 
+# get WRD
+getwd()
+
+wrd <- "C:/Users/Fotsing Ernest/OneDrive/Bureau/SNRM_Training/R_Precourse_ErnestFotsing/LM/SNRM_Training_Nairoby"
+
+# get all files in my wdr
+list.files(wrd)
+
+#------------------First let do basic of plotting---------------------
+#1 ------first dowload the code from the repository online----
+
+# Define the URL of the Excel file
+url <- "https://github.com/Fotsing2023/SNRM_Training_Nairoby/blob/main/Basic_Plotting00.R"
+
+# Define the file path where you want to save the Excel file
+file_path <- "Basic_Plotting00.R"
+
+# Download the Excel file
+download.file(url, file_path, mode = "wb")
+
 #-------------Here we're going into modeling and I assume that you already did the previous and are able to deal with installing packages and read data
 
 # see the content of your files
