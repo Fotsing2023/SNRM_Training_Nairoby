@@ -11,7 +11,8 @@ author: "Ernest Fotsing, PhD"
 #Generate 50 random numbers in the range [0,50]:
 x = runif(50,0,50)
 
-#Now let's generate some y-values that are linearly correlated with the x-values with gradient=1, applying a random Normal offset (with sd=5):
+#Now let's generate some y-values that are linearly correlated with the 
+#x-values with gradient=1, applying a random Normal offset (with sd=5):
 y = x + rnorm(50,0,5)
 
 #Plotting y against x, you'll observe a positive linear relationship:
@@ -21,6 +22,7 @@ plot(y~x)
 #This strong linear relationship is reflected in the correlation coefficient and in the coefficient of determination (R^2):
 
 pearson_cor_coef = cor(x,y)
+
 list("cor"=pearson_cor_coef,"R^2"=pearson_cor_coef^2)
 
 #If the data exhibit a negative linear correlation then the correlation coefficient will become #strong and negative, whilst the R^2 value will remain strong and positive:
@@ -51,10 +53,12 @@ cor.test(x,y)
 # 
 # We will now attempt to construct a simple linear model that uses `Girth` to predict `Volume`.
 ?trees # to what's is these data about 
-data(trees)
+ data(trees)
 
 plot(Volume~Girth,data=trees)
 m1 = lm(Volume~Girth,data=trees)
+summary(m1)
+
 abline(m1)
 cor.test(trees$Volume,trees$Girth)
 
@@ -70,7 +74,9 @@ plot(m1)
 
 # Section 3: Assessing the quality of linear models
 
-# Let's see what happens if we try to describe a non-linear relationship using a linear model. Consider the sine function in the range [0,1.5*pi):
+# Let's see what happens if we try to describe a 
+#non-linear relationship using a linear model. 
+#Consider the sine function in the range [0,1.5*pi):
 
 z = seq(0,1.5*pi,0.2)
 plot(sin(z)~z)
@@ -200,6 +206,6 @@ between `time` and `conc`?
 assumptions are not violated (too much). Are there any outliers with large influence? What are the parameter estimates? Are both terms significant?
   - Add a line to the plot showing the linear relationship between the transformed data.
 - Now regenerate the original plot of `time` versus `conc` (i.e. the untransformed
-                                                            data). Using the `lines` function, add a curve to the plot corresponding to the
+  data). Using the `lines` function, add a curve to the plot corresponding to the
 fitted values of the model.
 

@@ -23,7 +23,6 @@ url <- "https://github.com/Fotsing2023/SNRM_Training_Nairoby/blob/main/Basic_Plo
 
 # Define the file path where you want to save the Excel file
 file_path <- "Basic_Plotting00.R"
-
 # Download the Excel file
 download.file(url, file_path, mode = "wb")
 
@@ -45,10 +44,12 @@ summary(diet)
 diet$gender
 diet$age
 
+ncol(diet)
+
 # create new columns based on existing ones
 
 diet$weight.loss <- diet$final.weight - diet$initial.weight
-
+head(diet)
 
 #Subsetting rows and columns is done using the `[rows, columns]` syntax; where `rows` and `columns` are *vectors* containing the rows and columns you want
 
@@ -58,7 +59,6 @@ diet$diet.type == "A"
 
 dietA <- diet[diet$diet.type == "A",]
 dietA
-
 
 ## Visualisation
 
@@ -92,15 +92,17 @@ diet = read.csv("./CourseData/diet.csv", row.names = 1)
 # Define new column: weight loss
 diet$weight.loss = diet$initial.weight - diet$final.weight 
 
+unique(diet$diet.type)
+
 # Factorize diet type and gender
 diet$diet.type = factor(diet$diet.type, levels = c("A", "B", "C"))
 diet$gender    = factor(diet$gender, levels = c("Female", "Male"))
+str(diet)
 
 # Boxplot of weight loss per diet type
 boxplot(weight.loss ~ diet.type, data = diet, col = "light gray",
         ylab = "Weight loss (kg)", xlab = "Diet type")
 abline(h = 0, col = "blue")
-
 
 # -----------------------------
 # Section 2: ANOVA
@@ -122,13 +124,13 @@ print(diet.kruskal)
 summary(aov(weight.loss ~ diet.type, data = diet[diet$diet.type != "B", ]))
 t.test(weight.loss ~ diet.type, data = diet[diet$diet.type != "B", ], var.equal = TRUE)
 
-
 # -----------------------------
 # Section 3: Model check
 # -----------------------------
 
 # Mean and median weight loss per group
 mean_group   = tapply(diet$weight.loss, diet$diet.type, mean)
+mean_group
 median_group = tapply(diet$weight.loss, diet$diet.type, median)
 mean_group
 median_group
@@ -136,6 +138,7 @@ median_group
 # Residuals
 diet$resid.mean   = diet$weight.loss - mean_group[as.numeric(diet$diet.type)]
 diet$resid.median = diet$weight.loss - median_group[as.numeric(diet$diet.type)]
+
 diet[1:10, ]
 
 # Boxplot and QQ plot of residuals
@@ -158,7 +161,6 @@ shapiro.test(diet$resid.mean)
 # Bartlett's test for equal variances
 bartlett.test(diet$resid.mean ~ as.numeric(diet$diet.type))
 
-
 # -----------------------------
 # Section 4: Multiple comparisons
 # -----------------------------
@@ -180,20 +182,22 @@ summary(diet.fisher)
 # Two-way ANOVA using lm
 anova(lm(weight.loss ~ diet.type * gender, data = diet))
 
+lm <- lm(weight.loss ~ diet.type * gender, data = diet)
+summary(lm)
 
 # -----------------------------
 # Section 6: Practicals
 # -----------------------------
-
 
 # Section 5: Practicals
 
 Analyse the two following datasets with the suitable analysis:
   
   ## (i) *amess.csv*
-The data for this exercise are to be found in *amess.csv*. The data are the red cell folate levels in three groups of cardiac bypass patients given different levels of nitrous oxide (N2O) and oxygen (O2) ventilation. (There is a reference to the source of this data in Altman, Practical Statistics for Medical Research, p. 208.)
+The data for this exercise are to be found in *amess.csv*. 
+The data are the red cell folate levels in three groups of cardiac
+bypass patients given different levels of nitrous oxide (N2O) and oxygen (O2) ventilation. (There is a reference to the source of this data in Altman, Practical Statistics for Medical Research, p. 208.)
 The treatments are
-
 * 50% N2O and 50% O2 continuously for 24 hours 
 * 50% N2O and 50% O2 during the operation
 * No N2O but 35-50% O2 continuously for 24 hours
@@ -206,4 +210,3 @@ Let’s suppose we are initially interested in whether the number of breast canc
 
 Visualise the distribution of breast cancer incidence in each continent. Check how many observations belong to each group (continent). Are there any groups that you would consider removing/grouping before performing the analysis ? 
   
-#

@@ -30,24 +30,26 @@ hist(xdata$liters.per.hour)
 # FIT THE MODEL
 
 res=lm(liters.per.hour~number.participants,data=xdata)
+summary(res)
 
- # CHECKS OF ASSUMPTIONS
-
+# CHECKS OF ASSUMPTIONS
 # normality of residuals
 # getresiduals using
 residuals(res)
 # checknormalityofresiduals:
 hist(residuals(res), probability=T)
 # add a line showing the respective normal distribution:
-x=seq(from=min(residuals(res)), to=max(residuals(res)), length.out=100)
+x=seq(from=min(residuals(res)), to=max(residuals(res)), 
+      length.out=100)
 lines(x=x, y=dnorm(x, mean=0, sd=sd(residuals(res))))
 # are not really normal but neither very skewed or with utliers(?okay)
 
 # CHECKS OF ASSUMPTIONS
 
-# aqq-plot gives view of the residual distribution
+# a qqplot gives view of the residual distribution
 # use
-qqnorm(residuals(res));qqline(residuals(res))
+qqnorm(residuals(res))
+qqline(residuals(res))
 # it suggests that smallv alues are too large (compare also with histogram on previous page)
 # inanidealcaseallpointswouldfallonastraightline
 
@@ -91,7 +93,6 @@ which.min(dffits(res))#,or
 which.max(abs(dffits(res)))
 # which.maxreturnsthepositioninthevectorwherethemaximumoccurs
 
-
 # influencediagnostics,DFBeta:
 # comparemodelcoefficientsbetweenmodelusingalldataandmodelwithcasesexcludedoneatatime
 # dfbeta(res)revealsunstandardizedDFBetavalues(differencebetweenestimatesderivedfromalldataandwithcasesexcludedoneatatime)
@@ -107,8 +108,6 @@ head(dfbeta(res))
 # =>comprisesonecolumnforeachestimatedparameterandonerowforeachdatapoint)
 
 # CHECKS OF ABSENCE OF INFLUENTIAL CASES
-
-
 # influencediagnostics,DFBeta:
 # tocomparetheestimatedcoefficientsbasedonalldatawiththerangeofestimatesderivedfromdatadroppingcasesoneatatimeuse
 round(cbind(coefficients(res), coefficients(res)+ t(apply(X=dfbeta(res), MARGIN=2, FUN=range))), 5)
@@ -148,8 +147,8 @@ plot(cooks.distance(res))
 plot(as.vector(influence(res)$hat))
 
 # a potentially interesting function is identify(<?>)
-identify(as.vector(influence(res)$hat))
-
+d<- identify(as.vector(influence(res)$hat))
+d
 
 # SAVING THE WORKSPACE
 
@@ -162,7 +161,7 @@ identify(as.vector(influence(res)$hat))
 # 
 # savetheworkspace(wewilllaterneedtocontinueworkingwithit):
 getwd()
-save.image("./water_cons.RData")#(don'tforgettoaddtheextension!)
+save.image("./water_cons.RData")#(don't forget to add the extension!)
 
 diagnostics.plot<-function(mod.res){
 	old.par = par(no.readonly = TRUE)
@@ -171,7 +170,7 @@ diagnostics.plot<-function(mod.res){
 	hist(residuals(mod.res), probability=T, xlab="",
 		ylab="", main="")
 	mtext(text="histogram of residuals", side=3, line=0)
-	x=seq(min(residuals(mod.res)), max(residuals(mod.res)), 		length.out=100)
+	x=seq(min(residuals(mod.res)), max(residuals(mod.res)),length.out=100)
 	lines(x, dnorm(x, mean=0, sd=sd(residuals(mod.res))))
 	qqnorm(residuals(mod.res), main="", pch=19)
 	qqline(residuals(mod.res))
@@ -183,15 +182,11 @@ diagnostics.plot<-function(mod.res){
 	par(old.par)
 }
 
-
 mean(1:10)
-
-
 
 #LINEAR REGRESSION
 
 res=lm(liters.per.hour~number.participants,data=xdata)
-
 
 # RESULTS
 
@@ -262,51 +257,26 @@ cbind(coefficients(res),object=confint(res))
 
 # toplottheresult,Iwouldbeginwithplottingtheresponseagainstthepredictor:
 
-plot(x=xdata$number.participants, y=xdata$liters.per.hour, las=1, pch=19, xlab="number participants", ylab="liters per hour")
-# plot(x,y)revealsascatterplotofyagainstx
-
-# theargumentpchdefinesthesymbol('pointcharacter')
-# try
-plot(x=1:25,y=rep(x=1,times=25),pch=1:25)
-# togetanoverview
-# ylab="text",andxlab=...definethelabelsattheaxes
-# las=1:printaxistickslabelsupright('labelaxisstyle')
-# check?parformanymorearguments/options
-
+plot(x=xdata$number.participants, y=xdata$liters.per.hour,
+    las=1, pch=19, xlab="number participants", ylab="liters per hour")
+#plot(x=1:25,y=rep(x=1,times=25),pch=1:25)
 # add regression line:
-abline(res, lty=2, lwd=6)
-# ablineaddsastraightlinebeingdefinedby,e.g.,anintercept(a)andaslope(b)
-# notethatthefunctionablinecanextractthemodelcoefficientsfromtheobjectresultingfromacallof
-# lm(whenthemodelwasasimpleregression)
-# lty=2:meanstogetadashedline
-
-
+abline(res, lty=1, lwd=1)
 # GETTING CONFIDENCE INTERVALS INTO THE PLOT
-
-# togetaconfidenceintervalofthefittedmodelintotheplot,onefirstneedstoconstructadataframeforwhichpredictionsaretobemade
 pred.data=data.frame(
 number.participants= seq(from=min(xdata$number.participants), 
                            to=max(xdata$number.participants), length.out=100))
-
-# nextwegettheconfidenceintervalusing
 ci.plot=predict.lm(object=res, newdata=pred.data, interval="confidence")
-# (thelevelof95%canbechangedusingtheargumentlevel)
-# inspectci.plotusing
 str(ci.plot)
 
-
-# toaddthelinesdepictingtheconfidenceintervalofthemodelpredictionsuse
+# add ci lines 
 lines(x=pred.data$number.participants, y=ci.plot[, "lwr"], lty=3)
 lines(x=pred.data$number.participants, y=ci.plot[, "upr"], lty=3)
-# inamatrix(likeci.plot)columnscanbeaddressedbytheirnamesonlyasshownabove
-# notethatherethelinedepictingthefittedmodelextendsoverawiderrangethanthelinesshowingtheCI
-# thiscouldbefixedbyaddingthelineshowingthemodelusingthefunctionlinesaswell
-
 
 # SAVING THE PLOT (all OS)
 
-# oneveryOSonecanusethefunctiondev.copy2pdf
-# savesthecurrent/activeplot('device')intoapdf-file
+# on every OS one can  use the function dev.copy2pdf
+# saves the current/active plot('device')into a pdf-file
 # use:
 dev.copy2pdf(file="<?>.pdf")
 # analternativeisdev.copy2epswhichworkscorrespondingly
@@ -320,11 +290,13 @@ dev.copy2pdf(file="<?>.pdf")
 #---------------------SECOND EXERCICES-----------------------------
 #
 ##############################Picth---------------------
-pitch <- c(233,204,242,130,112,142)
+my.df1 <- pitch <- c(233,204,242,130,112,142)
 sex <-c(rep("female",3),rep("male",3))
-levels(sex)
+my.df1 <- as.data.frame(cbind(my.df1, sex))
+my.df1 <- my.df1[, -3]
+colnames(my.df1) <- c("pitch", "sex")
 str(my.df1)
-mydf1$sex <- as.factor(sex)
+my.df1$sex <- as.factor(sex)
 
 age <- c(20,14,15,30,100,90)
 tail <- c(167,178,200,115,199,156)
@@ -337,11 +309,13 @@ my.df1 = data.frame(sex,pitch, age, tail, long)
 
 xmdl = lm(pitch ~ sex, my.df1)
 
+library(dplyr)
 
 corrM <- my.df1 %>% 
   dplyr::select(pitch, tail, long, age) %>% cor()
-
 str(my.df1)
+
+library(corrplot)
 
 corrplot(corrM, 
          method = "number", 
@@ -371,10 +345,9 @@ AIC(xmdl3)
 summary(xmdl)
 
 install.packages((AICcmodavg))
-
+library(AICcmodavg)
 # create age
 age<- c(15, 20, 30, 56, 12, 45)
-
 my.df2 = data.frame(my.df1,age)
 
 xmdl2<- lm(pitch ~ sex + age, data=my.df2) #Multiple linear regression: model one response variable as a function of multiple predictor variables
@@ -428,7 +401,9 @@ boxplot(mpg ~ cyl, data = mtcars, xlab = "Number of Cylinders",
 dev.off()
 
 # Give the chart file a name.
-png(file = "boxplot_with_notch.png")
+png(file = "boxplot_with_notch.png", dpi = "300")
+jpeg(file = "boxplot_with_notch.jpeg")
+pdf(file = "boxplot_with_notch.png", weigtg= 10, heitgh=12)
 # Plot the chart.
 boxplot(mpg ~ cyl, data = mtcars,
         xlab = "Number of Cylinders",

@@ -27,15 +27,20 @@ summary(m2)
 m3 = lm(Volume~Girth*Height,data=trees)
 summary(m3)
 
-#All terms are highly significant. Note that the `Height` is more significant than in the previous model, despite the introduction of an additional parameter.
+#All terms are highly significant. Note that the `Height` 
+#is more significant than in the previous model, 
+#despite the introduction of an additional parameter.
 
 # We'll now try a different functional form - rather than looking for an additive model, we can explore a multiplicative model by applying a log-log transformation (leaving out the interaction term for now).
-
 
 m4 = lm(log(Volume)~log(Girth)+log(Height),data=trees)
 summary(m4)
 
-#All terms are significant. Note that the residual standard error is much lower than for the previous models. However, this value cannot be compared with the previous models due to transforming the response variable. The R^2 value has increased further, despite reducing the number of parameters from four to three.
+#All terms are significant. 
+#Note that the residual standard error is 
+#much lower than for the previous models. 
+#However, this value cannot be compared with the previous models due to transforming the response variable. The R^2 value has increased further, despite reducing the number of parameters from four to three.
+summary(m4)
 
 confint(m4)
 # Looking at the confidence intervals for the parameters reveals that the estimated power of `Girth` is around 2, and `Height` around 1. This makes a lot of sense, given the well-known dimensional relationship between `Volume`, `Girth` and `Height`!
@@ -45,17 +50,24 @@ confint(m4)
 m5 = lm(log(Volume)~log(Girth)*log(Height),data=trees)
 summary(m5)
 
-# The R^2 value has increased (of course, as all we've done is add an additional parameter), but interestingly none of the four terms are significant. This means that none of the individual terms alone are vital for the model - there is duplication of information between the variables. So we will revert back to the previous model.
+# The R^2 value has increased (of course, 
+#as all we've done is add an additional parameter), 
+#but interestingly none of the four terms are significant. This means that none of the individual terms alone are vital for the model - there is duplication of information between the variables. So we will revert back to the previous model.
 # 
 # Given that it would be reasonable to expect the power of `Girth` to be 2, and Height to be 1, we will now fix those parameters, and instead just estimate the one remaining parameter.
 
 m6 = lm(log(Volume)-log((Girth^2)*Height)~1,data=trees)
 summary(m6)
 
-# Note that there is no R^2 (as only the intercept was included in the model), and that the Residual Standard Error is incomparable with previous models due to changing the response variable.
-# We can alternatively construct a model with the response being y, and the error term additive rather than multiplicative.
+# Note that there is no R^2 (as only the intercept was included 
+#in the model), and that the Residual Standard Error is incomparable with previous models due to changing the response variable.
+# We can alternatively construct a model with the response 
+#being y, and the error term additive rather than multiplicative.
 
-m7 = lm(Volume~0+I(Girth^2):Height,data=trees) # The 0 + in the formula removes the intercept.I(Girth^2) ensures it literally squares the girth values.I(Girth^2):Height is the product of Girth^2 and Height.
+m7 = lm(Volume~0+I(Girth^2):Height,data=trees) 
+# The 0 + in the formula removes the intercept.I(Girth^2) 
+#ensures it literally squares the girth values.
+#I(Girth^2):Height is the product of Girth^2 and Height.
 summary(m7)
 
 # Note that the parameter estimates for the last two models are slightly different... this is due to differences in the error model.
@@ -64,6 +76,7 @@ summary(m7)
 
 # Of the last two models, the one with the log-Normal error model would seem to have the more Normal residuals. This can be inspected by looking at diagnostic plots, by and using the `shapiro.test()`
 
+par(mfrow = c(1, 2))
 plot(m6)
 plot(m7)
 shapiro.test(residuals(m6))
@@ -85,20 +98,24 @@ AIC(m6)
 summary(m7)
 AIC(m7)
 
+
 # Whilst the AIC can help differentiate between similar models, it cannot help deciding between models that have different responses. Which model would you select as the most appropriate?
 
 # Section 3: Stepwise Regression
 
 # The in-built dataset `swiss` contains data pertaining to fertility, along with a variety of socioeconomic indicators. We want to select a sensible model using stepwise regression. First regress `Fertility` agains all available indicators
 head(swiss)
+names(swiss)
+
 m8 = lm(Fertility~.,data=swiss)
 summary(m8)
 
 # Are all terms significant?
 # Now use stepwise regression, performing backward elimination in order to automatically remove inappropriate terms
-
+install.packages("MASS")
 library(MASS)
+stepAIC(m8)
 summary(stepAIC(m8))
-
+plot(m8)
 #Are all terms significant? Is this model suitable? What are the pro's and con's of this approach? 
 

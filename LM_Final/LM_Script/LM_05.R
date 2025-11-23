@@ -81,6 +81,7 @@ hist(temp.ge$ELEV) # Because there is a single value relatively far from the res
 hist(temp.ge$temp) # here again we see a gap in the data. Although this is all admittedly subjective, I consider this to be on the edge of where I would transform this data. In this case I will leave it as is.
 
 # let's plot our data, looking at elevation vs. annual temperature
+library(ggplot2)
 ggplot(data = temp.ge, 
        mapping = aes(x = ELEV, 
                      y = temp)) +
@@ -130,7 +131,6 @@ summary(lm1)
 
 # As expected, temperature drops with elevation, starting from a mean temperature of 9.7C at sea level (ELEV = 0, also the intercept by definition). Temperature drops by 0.004C per 1 unit (meter) of elevation. We could also say the temp drops by 0.42C per 100m elevation. Based on the p-value, it is highly unlikely we would find a t-value of -21.34 if the slope was actually zero. The model explains about 80% of the variance in the temperature data. We won't often get R2 values this high in ecological research.
 
-
 # Plot the Regression Line with the Data ----------------------------------
 
 ggplot(data = temp.ge, 
@@ -162,7 +162,8 @@ ggplot(data = temp.ge,
 
 coef(lm1) 
 
-coef(lm1)[1] + (coef(lm1)[2] * 2500) # Here I am calling the first value for our coefficients to get the intercept, and the second value to get the slope. Note that this would work, even if we changed our linear model. It is always good practice to write code in this way, so that changes made above in your script will not impact the code you've written below.
+coef(lm1)[1] + (coef(lm1)[2] * 2500) 
+# Here I am calling the first value for our coefficients to get the intercept, and the second value to get the slope. Note that this would work, even if we changed our linear model. It is always good practice to write code in this way, so that changes made above in your script will not impact the code you've written below.
 
 # To use predict, we create a new data frame, with the value(s) over which you want to predict temperature. The new data frame needs the same information that we fed into the lm formula. The name of the column(s) here must be exactly the same as in the regression equation. Here this is a basic example, we are just making a dataframe with 1 column, and one value.
 
@@ -183,6 +184,10 @@ lm1.pred <- predict(lm1,
 
 View(lm1.pred) #100 predicted values of temperature, for your 100 defined values of elevation
 
+v<- as.data.frame(lm1.pred)
+
+v <- cbind(new.elev, lm1.pred)
+v
 # We can also turn on the confidence intervals as an argument to get this information along with our predicted/fitted values.
 
 lm1.pred <- predict(lm1, 
@@ -208,10 +213,7 @@ well elevation predicts annual temperature in this region, and to use the regres
 annual temperature for Front Royal, VA.
 
 Proceed through the entire analysis workflow and answer the following questions
-
-
 Study Questions
-
 1. What is the regression (beta) coefficient for elevation? 
 2. What is the predicted change in annual temperature, with a 100 m increase in elevation? 
 3. How much variation in temperature is explained by elevation in the US? 4. Using ggplot, generate a scatterplot of temperature vs. elevation data. Include your fitted regression
